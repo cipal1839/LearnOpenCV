@@ -1,2 +1,1 @@
-# LearnOpenCV
-学习opencv，过程中写的demo
+使用c++ 编写Opencv测试程序，学习过程。
