@@ -1,7 +1,8 @@
 #include<iostream>  
 #include <opencv2/core/core.hpp>  
 #include <opencv2/highgui/highgui.hpp>  
-#include "Globle_Otsu_Binarizer.h"
+#include "opencv/highgui.h"
+#include "opencv/cv.h"
 #include "OpenCV_Function.h"
 
 #define WINDOW_NAME1 "【原始图片】"        //为窗口标题定义的宏 
@@ -27,25 +28,25 @@ void on_Matching(int,void* ){
 
 	//【3】进行匹配和标准化
 	cv::matchTemplate( g_srcImage, g_templateImage, g_resultImage, g_nMatchMethod );
-	cv::normalize( g_resultImage, g_resultImage, 0, 1, NORM_MINMAX, -1, Mat() );
+	cv::normalize( g_resultImage, g_resultImage, 0, 1, cv::NORM_MINMAX, -1, cv::Mat() );
 
 	//【4】通过函数 minMaxLoc 定位最匹配的位置
-	double minValue; double maxValue; Point minLocation; Point maxLocation;
-	Point matchLocation;
-	cv::minMaxLoc( g_resultImage, &minValue, &maxValue, &minLocation, &maxLocation, Mat() );
+	double minValue; double maxValue; cv::Point minLocation; cv::Point maxLocation;
+	cv::Point matchLocation;
+	cv::minMaxLoc( g_resultImage, &minValue, &maxValue, &minLocation, &maxLocation, cv::Mat() );
 
 	//【5】对于方法 SQDIFF 和 SQDIFF_NORMED, 越小的数值有着更高的匹配结果. 而其余的方法, 数值越大匹配效果越好
 	//此句代码的OpenCV2版为：
 	//if( g_nMatchMethod  == CV_TM_SQDIFF || g_nMatchMethod == CV_TM_SQDIFF_NORMED )
 	//此句代码的OpenCV3版为：
-	if( g_nMatchMethod  == TM_SQDIFF || g_nMatchMethod == TM_SQDIFF_NORMED )
+	if( g_nMatchMethod  == cv::TM_SQDIFF || g_nMatchMethod == cv::TM_SQDIFF_NORMED )
 	{ matchLocation = minLocation; }
 	else
 	{ matchLocation = maxLocation; }
 
 	//【6】绘制出矩形，并显示最终结果
-	cv::rectangle( srcImage, matchLocation, Point( matchLocation.x + g_templateImage.cols , matchLocation.y + g_templateImage.rows ), Scalar(0,0,255), 2, 8, 0 );
-	cv::rectangle( g_resultImage, matchLocation, Point( matchLocation.x + g_templateImage.cols , matchLocation.y + g_templateImage.rows ), Scalar(0,0,255), 2, 8, 0 );
+	cv::rectangle( srcImage, matchLocation, cv::Point( matchLocation.x + g_templateImage.cols , matchLocation.y + g_templateImage.rows ),cv::Scalar(0,0,255), 2, 8, 0 );
+	cv::rectangle( g_resultImage, matchLocation, Point( matchLocation.x + g_templateImage.cols , matchLocation.y + g_templateImage.rows ), cv::Scalar(0,0,255), 2, 8, 0 );
 
 	cv::imshow( WINDOW_NAME1, srcImage );
 	cv::imshow( WINDOW_NAME2, g_resultImage );
@@ -62,69 +63,11 @@ void OpenCV_Function::matchByTrackbar(){
 	g_srcImage = cv::imread( "exam001.jpg", 1 );
 	g_templateImage = cv::imread( "exam-logo1.jpg", 1 );
 
-	namedWindow( WINDOW_NAME1, WINDOW_AUTOSIZE );
-	namedWindow( WINDOW_NAME2, WINDOW_AUTOSIZE );
+	cv::namedWindow( WINDOW_NAME1, cv::WINDOW_AUTOSIZE );
+	cv::namedWindow( WINDOW_NAME2, cv::WINDOW_AUTOSIZE );
 
-	createTrackbar( "方法", WINDOW_NAME1, &g_nMatchMethod, g_nMaxTrackbarNum,on_Matching);
+	cv::createTrackbar( "方法", WINDOW_NAME1, &g_nMatchMethod, g_nMaxTrackbarNum,on_Matching);
 	on_Matching(0,0);
-}
-
-//初次测试代码，调用了otsu 抓去二值化。
-void OpenCV_Function::first()  
-{  
-	for(int i=0;i<5;i++){
-		//string imgPath = "pic"+itoa(i)+".jpg";
-		std::stringstream ss;
-		ss << "pic" << i<<".jpg";
-		// 读入一张图片（游戏原画）  
-		cv::Mat inputImg=cv::imread(ss.str());  
-
-		float Thousold_Gray;
-		float Thousold_Blue; 
-		float Thousold_Green; 
-		float Thousold_Red;
-		float Blue_Max_Background_value;
-		float Green_Max_Background_value;
-		float Red_Max_Background_value;
-		float Blue_percent10_upper;
-		float Green_percent10_upper;
-		float Red_percent10_upper;
-
-		cv::Mat Image_BGR[3];
-		cv::Mat  Image_BGR_Binary_Virtual[3];
-
-		cv::split(inputImg,Image_BGR);
-
-		Globle_Otsu_Binarizer* point=new Globle_Otsu_Binarizer();
-		// blue channel
-		point->Binary_way(Image_BGR[0],Image_BGR_Binary_Virtual[0]);
-		Thousold_Blue=point->Thoushold_Value;
-		Blue_Max_Background_value=point->background_value;
-		Blue_percent10_upper=point->Percent10_upper_by_Thoushold_Value_index;
-		// green channel
-		point->Binary_way(Image_BGR[1],Image_BGR_Binary_Virtual[1]);
-		Thousold_Green=point->Thoushold_Value;
-		Green_Max_Background_value=point->background_value;
-		Green_percent10_upper=point->Percent10_upper_by_Thoushold_Value_index;
-		// red channel 
-		point->Binary_way(Image_BGR[2],Image_BGR_Binary_Virtual[2]);
-		Thousold_Red=point->Thoushold_Value;
-		Red_Max_Background_value=point->background_value;
-		Red_percent10_upper=point->Percent10_upper_by_Thoushold_Value_index;
-
-		delete point;
-
-		std::cout <<"Thousold_Blue:"<<Thousold_Blue <<" Blue_Max_Background_value:"<<Blue_Max_Background_value << std::endl;
-		std::cout <<"Thousold_Green:"<<Thousold_Green <<" Green_Max_Background_value:"<<Green_Max_Background_value << std::endl;
-		std::cout <<"Thousold_Red:"<<Thousold_Red <<" Red_Max_Background_value:"<<Red_Max_Background_value << std::endl;
-
-		cv::namedWindow("游戏原画-0");   
-		cv::imshow("游戏原画-0",Image_BGR[0]); 
-
-		cv::imshow("游戏原画-1",Image_BGR[1]);  
-		cv::imshow("游戏原画-1",Image_BGR[2]);  
-
-	}
 }
 
 //分割通道，然后再混合。
