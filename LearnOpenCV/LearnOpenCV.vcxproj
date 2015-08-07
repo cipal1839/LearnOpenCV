@@ -74,7 +74,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Globle_Otsu_Binarizer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OpenCV_Function.cpp" />
   </ItemGroup>
@@ -100,7 +99,6 @@
     <None Include="rain.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Globle_Otsu_Binarizer.h" />
     <ClInclude Include="OpenCV_Function.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

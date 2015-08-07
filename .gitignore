@@ -11,3 +11,16 @@
 *.lai
 *.la
 *.a
+
+ipch/learnopencv-63fbc58e/learnopencv-909b2509.ipch
+LearnOpenCV/Debug/*
+LearnOpenCV/Debug/*.*
+LearnOpenCV.opensdf
+LearnOpenCV.sdf
+LearnOpenCV.suo
+LearnOpenCV/LearnOpenCV.vcxproj
+LearnOpenCV/LearnOpenCV.vcxproj.filters
+LearnOpenCV.sdf
+LearnOpenCV.suo
+LearnOpenCV/LearnOpenCV.vcxproj
+LearnOpenCV/LearnOpenCV.vcxproj.filters
