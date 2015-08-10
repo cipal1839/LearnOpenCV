@@ -10,7 +10,7 @@ int main(){
 	//LinearBlending();
 	OpenCV_Function* of=new OpenCV_Function();
 
-	of->matchByTrackbar();
+	of->contrastAndBrightByTrackbar();
 
 	cv::waitKey(); 
 	return 0; 

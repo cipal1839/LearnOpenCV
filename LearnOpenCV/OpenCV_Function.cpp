@@ -6,15 +6,49 @@
 #include "OpenCV_Function.h"
 
 #define WINDOW_NAME1 "【原始图片】"        //为窗口标题定义的宏 
-#define WINDOW_NAME2 "【匹配窗口】"        //为窗口标题定义的宏 
+#define WINDOW_NAME2 "【效果窗口】"        //为窗口标题定义的宏 
 
 int g_nMatchMethod;
 int g_nMaxTrackbarNum;
+int g_nContrastValue=80; //对比度值  
+int g_nBrightValue=80;  //亮度值 
 cv::Mat g_srcImage; 
 cv::Mat g_templateImage; 
 cv::Mat g_resultImage;
 
 
+//改变图像对比度和亮度值的回调函数  
+void contrastAndBright(int,void*){
+	for(int y=0;y<g_srcImage.rows;y++){
+		for(int x=0;x<g_srcImage.cols;x++){
+			for(int c = 0; c < 3; c++ )  {
+				g_resultImage.at<cv::Vec3b>(y,x)[c]= cv::saturate_cast<uchar>( (g_nContrastValue*0.01)*(g_srcImage.at<cv::Vec3b>(y,x)[c] ) + g_nBrightValue );  
+			}
+		}
+	}
+
+	 //显示图像  
+    cv::imshow(WINDOW_NAME1, g_srcImage);  
+    cv::imshow(WINDOW_NAME2, g_resultImage); 
+}
+//改变图像对比度和亮度值的主方法  
+void OpenCV_Function::contrastAndBrightByTrackbar(){
+	system("color5F");   
+	g_srcImage=cv::imread("girl-t1.jpg");
+
+	g_resultImage= cv::Mat::zeros( g_srcImage.size(), g_srcImage.type());
+
+	cv::namedWindow( WINDOW_NAME1, cv::WINDOW_AUTOSIZE );
+	cv::namedWindow( WINDOW_NAME2, cv::WINDOW_AUTOSIZE );
+
+	cv::createTrackbar("对比度：", WINDOW_NAME2,&g_nContrastValue,300,contrastAndBright );  
+    cv::createTrackbar("亮   度：",WINDOW_NAME2,&g_nBrightValue,200,contrastAndBright );  
+
+	contrastAndBright(g_nContrastValue,0);  
+    contrastAndBright(g_nBrightValue,0);  
+
+
+}
 //这个内部方法要放在调用方法前面，否则编译不通过。
 void on_Matching(int,void* ){
 	//【1】给局部变量初始化
@@ -52,7 +86,6 @@ void on_Matching(int,void* ){
 	cv::imshow( WINDOW_NAME2, g_resultImage );
 }
 
-
 //模板匹配示例,通过滑动条控制方法
 void OpenCV_Function::matchByTrackbar(){
 	//【0】改变console字体颜色
@@ -60,8 +93,8 @@ void OpenCV_Function::matchByTrackbar(){
 
 	g_nMaxTrackbarNum = 5;
 
-	g_srcImage = cv::imread( "exam001.jpg", 1 );
-	g_templateImage = cv::imread( "exam-logo1.jpg", 1 );
+	g_srcImage = cv::imread( "girl-t1.jpg", 1 );
+	g_templateImage = cv::imread( "girl-logo-t1.jpg", 1 );
 
 	cv::namedWindow( WINDOW_NAME1, cv::WINDOW_AUTOSIZE );
 	cv::namedWindow( WINDOW_NAME2, cv::WINDOW_AUTOSIZE );
@@ -73,12 +106,15 @@ void OpenCV_Function::matchByTrackbar(){
 //分割通道，然后再混合。
 void OpenCV_Function::splitiChannelBlending(){
 	cv::Mat logoImg=cv::imread("dota_logo.jpg",0);
+	cv::vector<cv::Mat> channels; 
+	
 	for(int i=0;i<3;i++){
 		cv::Mat srcImg=cv::imread("dota.jpg");
-		cv::vector<cv::Mat> channels; 
+
 		cv::split(srcImg,channels);
 
 		cv::Mat imageChannel=channels.at(i);  
+
 		cv::Mat newImg=imageChannel(cv::Rect(800,350,logoImg.cols,logoImg.rows));
 
 		cv::addWeighted(newImg,1,logoImg,0.5,0.,newImg);  

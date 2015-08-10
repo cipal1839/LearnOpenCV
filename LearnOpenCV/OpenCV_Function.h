@@ -11,6 +11,8 @@ class OpenCV_Function  {
 		void LinearBlending();
 		void Load_Show();
 		void  ROI_AddImage();
+
+		void contrastAndBrightByTrackbar();
 };
 
 

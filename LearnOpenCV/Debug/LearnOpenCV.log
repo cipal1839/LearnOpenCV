@@ -1,19 +1,31 @@
-﻿生成启动时间为 8/7/2015 10:04:54 AM。
+﻿生成启动时间为 8/7/2015 5:29:39 PM。
      1>项目“D:\workspace\LearnOpenCV\LearnOpenCV\LearnOpenCV.vcxproj”在节点 2 上(build 个目标)。
-     1>PrepareForBuild:
-         正在创建目录“D:\workspace\LearnOpenCV\Debug\”。
-       InitializeBuildStatus:
+     1>InitializeBuildStatus:
          正在创建“Debug\LearnOpenCV.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
        ClCompile:
          d:\tools\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt OpenCV_Function.cpp
          OpenCV_Function.cpp
      1>d:\tools\opencv\opencv-2.4.11\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  d:\tools\microsoft visual studio 10.0\vc\include\stdio.h(234) : 参见“fopen”的声明
-     1>d:\workspace\learnopencv\learnopencv\opencv_function.cpp(49): error C3861: “Point”: 找不到标识符
-     1>d:\workspace\learnopencv\learnopencv\opencv_function.cpp(123): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
-     1>d:\workspace\learnopencv\learnopencv\opencv_function.cpp(123): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
-     1>已完成生成项目“D:\workspace\LearnOpenCV\LearnOpenCV\LearnOpenCV.vcxproj”(build 个目标)的操作 - 失败。
+     1>d:\workspace\learnopencv\learnopencv\opencv_function.cpp(159): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\workspace\learnopencv\learnopencv\opencv_function.cpp(159): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+       ManifestResourceCompile:
+         所有输出均为最新。
+       Link:
+         d:\tools\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\workspace\LearnOpenCV\Debug\LearnOpenCV.exe" /INCREMENTAL /NOLOGO opencv_core2411d.lib opencv_highgui2411d.lib opencv_imgproc2411d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\LearnOpenCV.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\workspace\LearnOpenCV\Debug\LearnOpenCV.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\workspace\LearnOpenCV\Debug\LearnOpenCV.lib" /MACHINE:X86 Debug\LearnOpenCV.exe.embed.manifest.res
+         Debug\Main.obj
+         Debug\OpenCV_Function.obj
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\LearnOpenCV.exe.embed.manifest" /manifest Debug\LearnOpenCV.exe.intermediate.manifest
+         所有输出均为最新。
+       LinkEmbedManifest:
+         所有输出均为最新。
+         LearnOpenCV.vcxproj -> D:\workspace\LearnOpenCV\Debug\LearnOpenCV.exe
+       FinalizeBuildStatus:
+         正在删除文件“Debug\LearnOpenCV.unsuccessfulbuild”。
+         正在对“Debug\LearnOpenCV.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“D:\workspace\LearnOpenCV\LearnOpenCV\LearnOpenCV.vcxproj”(build 个目标)的操作。
 
-生成失败。
+生成成功。
 
-已用时间 00:00:01.51
+已用时间 00:00:01.87

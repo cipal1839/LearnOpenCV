@@ -24,3 +24,14 @@ LearnOpenCV.sdf
 LearnOpenCV.suo
 LearnOpenCV/LearnOpenCV.vcxproj
 LearnOpenCV/LearnOpenCV.vcxproj.filters
+Debug/LearnOpenCV.exe
+Debug/LearnOpenCV.ilk
+Debug/LearnOpenCV.pdb
+LearnOpenCV/Debug/CL.write.1.tlog
+LearnOpenCV/Debug/LearnOpenCV.log
+LearnOpenCV/Debug/link.command.1.tlog
+LearnOpenCV/Debug/link.read.1.tlog
+LearnOpenCV/Debug/link.write.1.tlog
+LearnOpenCV/Debug/Main.obj
+LearnOpenCV/Debug/vc100.idb
+LearnOpenCV/Debug/vc100.pdb
