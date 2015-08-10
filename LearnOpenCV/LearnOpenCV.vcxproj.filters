@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Globle_Otsu_Binarizer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -79,9 +76,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Globle_Otsu_Binarizer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="OpenCV_Function.h">
       <Filter>头文件</Filter>
     </ClInclude>
