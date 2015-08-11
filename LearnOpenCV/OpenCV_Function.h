@@ -10,8 +10,8 @@ class OpenCV_Function  {
 		void first() ;
 		void LinearBlending();
 		void Load_Show();
-		void  ROI_AddImage();
-
+		void ROI_AddImage();
+		void filter();
 		void contrastAndBrightByTrackbar();
 };
 

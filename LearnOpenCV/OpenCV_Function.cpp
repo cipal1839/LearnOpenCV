@@ -17,6 +17,21 @@ cv::Mat g_templateImage;
 cv::Mat g_resultImage;
 
 
+void OpenCV_Function::filter(){
+	g_srcImage=cv::imread("girl-t1.jpg");
+	
+	cv::blur(g_srcImage,g_resultImage,cv::Size(2,2)); //值越大越模糊
+	cv::imshow( "blur", g_resultImage );
+
+	cv::GaussianBlur( g_srcImage, g_resultImage, cv::Size( 99, 99 ), 0, 0 );   //值越大越模糊,且值只能是正数和奇数
+	cv::imshow("GaussianBlur", g_resultImage );
+
+	cv::boxFilter(g_srcImage,g_resultImage,-1,cv::Size(5,5));
+	cv::imshow("boxFilter", g_resultImage );
+
+	cv::imshow( WINDOW_NAME1, g_srcImage );
+}
+
 //改变图像对比度和亮度值的回调函数  
 void contrastAndBright(int,void*){
 	for(int y=0;y<g_srcImage.rows;y++){
@@ -26,7 +41,6 @@ void contrastAndBright(int,void*){
 			}
 		}
 	}
-
 	 //显示图像  
     cv::imshow(WINDOW_NAME1, g_srcImage);  
     cv::imshow(WINDOW_NAME2, g_resultImage); 
