@@ -13,6 +13,8 @@ class OpenCV_Function  {
 		void ROI_AddImage();
 		void filter();
 		void contrastAndBrightByTrackbar();
+		void resize();
+		void Hough();
 };
 
 

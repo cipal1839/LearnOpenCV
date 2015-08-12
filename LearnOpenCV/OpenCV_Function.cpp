@@ -16,18 +16,155 @@ cv::Mat g_srcImage;
 cv::Mat g_templateImage; 
 cv::Mat g_resultImage;
 
+/**
+OpenCV中的霍夫线变换有如下三种：
+	<1>标准霍夫变换（StandardHough Transform，SHT），由HoughLines函数调用。
+	<2>多尺度霍夫变换（Multi-ScaleHough Transform，MSHT），由HoughLines函数调用。
+	<3>累计概率霍夫变换（ProgressiveProbabilistic Hough Transform，PPHT），由HoughLinesP函数调用。
+
+霍夫梯度法的原理是这样的。
+	【1】首先对图像应用边缘检测，比如用canny边缘检测。
+	【2】然后，对边缘图像中的每一个非零点，考虑其局部梯度，即用Sobel（）函数计算x和y方向的Sobel一阶导数得到梯度。
+	【3】利用得到的梯度，由斜率指定的直线上的每一个点都在累加器中被累加，这里的斜率是从一个指定的最小值到指定的最大值的距离。
+	【4】同时，标记边缘图像中每一个非0像素的位置。
+	【5】然后从二维累加器中这些点中选择候选的中心，这些中心都大于给定阈值并且大于其所有近邻。这些候选的中心按照累加值降序排列，以便于最支持像素的中心首先出现。
+	【6】接下来对每一个中心，考虑所有的非0像素。
+	【7】这些像素按照其与中心的距离排序。从到最大半径的最小距离算起，选择非0像素最支持的一条半径。
+	【8】如果一个中心收到边缘图像非0像素最充分的支持，并且到前期被选择的中心有足够的距离，那么它就会被保留下来。
+
+霍夫梯度法的缺点
+	<1>在霍夫梯度法中，我们使用Sobel导数来计算局部梯度，那么随之而来的假设是，其可以视作等同于一条局部切线，并这个不是一个数值稳定的做法。
+		在大多数情况下，这样做会得到正确的结果，但或许会在输出中产生一些噪声。
+	<2>在边缘图像中的整个非0像素集被看做每个中心的候选部分。因此，如果把累加器的阈值设置偏低，算法将要消耗比较长的时间。
+		第三，因为每一个中心只选择一个圆，如果有同心圆，就只能选择其中的一个。
+	<3>因为中心是按照其关联的累加器值的升序排列的，并且如果新的中心过于接近之前已经接受的中心的话，就不会被保留下来。
+		且当有许多同心圆或者是近似的同心圆时，霍夫梯度法的倾向是保留最大的一个圆。可以说这是一种比较极端的做法，因为在这里默认Sobel导数会产生噪声，若是对于无穷分辨率的平滑图像而言的话，这才是必须的。
+*/
+void OpenCV_Function::Hough(){
+	
+}
+
+void OpenCV_Function::resize(){
+	g_srcImage=cv::imread("girl-t1.jpg");
+
+	cv::pyrDown(g_srcImage,g_resultImage);  
+	cv::imshow( "pyrDown", g_resultImage );  
+
+	cv::pyrUp(g_srcImage,g_resultImage);  
+	cv::imshow( "pyrUp", g_resultImage );  
+
+	cv::resize(g_srcImage,g_resultImage,cv::Size( g_srcImage.cols*2, g_srcImage.rows*2 ));  
+	cv::imshow( "resize*2", g_resultImage );  
+
+	cv::resize(g_srcImage,g_resultImage,cv::Size( g_srcImage.cols/2, g_srcImage.rows/2 ));  
+	cv::imshow( "resize/2", g_resultImage );   
+
+	cv::imshow( WINDOW_NAME1, g_srcImage );
+}
 
 void OpenCV_Function::filter(){
 	g_srcImage=cv::imread("girl-t1.jpg");
-	
+
+	//均值滤波（邻域平均滤波）
 	cv::blur(g_srcImage,g_resultImage,cv::Size(2,2)); //值越大越模糊
 	cv::imshow( "blur", g_resultImage );
 
+	//高斯滤波
 	cv::GaussianBlur( g_srcImage, g_resultImage, cv::Size( 99, 99 ), 0, 0 );   //值越大越模糊,且值只能是正数和奇数
 	cv::imshow("GaussianBlur", g_resultImage );
 
-	cv::boxFilter(g_srcImage,g_resultImage,-1,cv::Size(5,5));
+	//方框滤波
+	cv::boxFilter(g_srcImage,g_resultImage,-1,cv::Size(5,5));//
 	cv::imshow("boxFilter", g_resultImage );
+
+	//中值滤波
+	cv::medianBlur(g_srcImage,g_resultImage,9);//这个参数必须是大于1的奇数
+	cv::imshow("medianBlur", g_resultImage );
+
+	//bilateralFilter 双边滤波器
+	cv::bilateralFilter( g_srcImage, g_resultImage, 25, 25*2, 25/2 );  
+	cv::imshow("bilateralFilter", g_resultImage );
+
+	//erode函数，使用像素邻域内的局部极小运算符来腐蚀一张图片
+	cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3,3));  
+	cv::erode(g_srcImage,g_resultImage,element,cv::Point(-1,-1),1);
+	cv::imshow("erode", g_resultImage );
+	//dilate函数，使用像素邻域内的局部极大运算符来膨胀一张图片
+	cv::dilate(g_srcImage,g_resultImage,element);
+	cv::imshow("dilate", g_resultImage );
+
+	//开运算（Opening Operation），其实就是先腐蚀后膨胀的过程
+	//dst=open(src,element)=dilate(erode(src,element));
+
+	//闭运算(Closing Operation),  其实就是先膨胀后腐蚀的过程
+	//dst=close(src,element)=erode(dilate(src,element));
+
+	//形态学梯度（Morphological Gradient）为膨胀图与腐蚀图之差
+	//dst=morph_grad(src,element)=dilate(src,element)-erode(src,element);
+
+	//顶帽运算（Top Hat）又常常被译为”礼帽“运算。为原图像与上文刚刚介绍的“开运算“的结果图之差
+	//dst=src-open(src,element);
+
+	//黑帽（Black Hat）运算为”闭运算“的结果图与原图像之差。
+	//dst=close(src,element)-src;
+	cv::morphologyEx(g_srcImage,g_resultImage, cv::MORPH_OPEN, element);  
+	cv::imshow( "morphologyEx", g_resultImage );
+
+	//最简单的canny用法，拿到原图后直接用。  
+	//这个函数阈值1和阈值2两者的小者用于边缘连接，而大者用来控制强边缘的初始段，推荐的高低阈值比在2:1到3:1之间。
+	cv::Mat cannyMat=g_srcImage.clone();
+	cv::Canny(cannyMat,cannyMat,3,9);
+	cv::imshow( "Canny", cannyMat );
+	//----------------------------------------------------------------------------------  
+    //  二、高阶的canny用法，转成灰度图，降噪，用canny，最后将得到的边缘作为掩码，拷贝原图到效果图上，得到彩色的边缘图  
+    //----------------------------------------------------------------------------------  
+	cv::Mat dst,edge,gray; 
+	dst.create( g_srcImage.size(), g_srcImage.type() );   // 【1】创建与src同类型和大小的矩阵(dst)  
+	cv::cvtColor(g_srcImage,gray,CV_BGR2GRAY);// 【2】将原图像转换为灰度图像  
+    cv::blur( gray, edge, cv::Size(3,3) );  // 【3】先用使用 3x3内核来降噪  
+	cv::Canny(edge,edge,3,9);
+	dst = cv::Scalar::all(0);   //【5】将dst内的所有元素设置为0   
+	g_srcImage.copyTo( dst, edge); //【6】使用Canny算子输出的边缘图g_cannyDetectedEdges作为掩码，来将原图g_srcImage拷到目标图g_dstImage中  
+	cv::imshow( "Canny2", dst );
+	
+	//----------------------------------------------------------------------------------  
+    //  调用Sobel函数的实例代码
+    //----------------------------------------------------------------------------------  
+	cv::Mat grad_x, grad_y;  
+   cv::Mat abs_grad_x, abs_grad_y;  
+	 //【3】求 X方向梯度  
+    cv::Sobel( g_srcImage, grad_x, CV_16S, 1, 0, 3, 1, 1, cv::BORDER_DEFAULT );  
+    cv::convertScaleAbs( grad_x, abs_grad_x );  
+    cv::imshow("【效果图】 X方向Sobel", abs_grad_x);   
+  
+    //【4】求Y方向梯度  
+    cv::Sobel( g_srcImage, grad_y, CV_16S, 0, 1, 3, 1, 1, cv::BORDER_DEFAULT );  
+    cv::convertScaleAbs( grad_y, abs_grad_y );  
+    cv::imshow("【效果图】Y方向Sobel", abs_grad_y);   
+  
+    //【5】合并梯度(近似)  
+    addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, dst );  
+    cv::imshow("【效果图】整体方向Sobel", dst);   
+  
+	//----------------------------------------------------------------------------------  
+    // Laplacian 算子是n维欧几里德空间中的一个二阶微分算子，定义为梯度grad（）的散度div（）。因此如果f是二阶可微的实函数，则f的拉普拉斯算子定义为：
+    //----------------------------------------------------------------------------------  
+	cv::Laplacian( g_srcImage, dst, CV_16S, 3, 1, 0, cv::BORDER_DEFAULT );  
+	cv::convertScaleAbs( dst, abs_grad_y );  
+	cv::imshow("Laplacian", abs_grad_y); 
+	
+
+	//----------------------------------------------------------------------------------  
+    //  scharr一般我就直接称它为滤波器，而不是算子。上文我们已经讲到，它在OpenCV中主要是配合Sobel算子的运算而存在的,
+    //----------------------------------------------------------------------------------  
+	 //【3】求 X方向梯度  
+	cv::Scharr( g_srcImage, grad_x, CV_16S, 1, 0, 1, 0, cv::BORDER_DEFAULT );  
+    cv:: convertScaleAbs( grad_x, abs_grad_x );  
+    cv::imshow("【效果图】 X方向Scharr", abs_grad_x);   
+	//【4】求Y方向梯度  
+	cv::Scharr( g_srcImage, grad_y, CV_16S, 0, 1, 1, 0, cv::BORDER_DEFAULT );  
+    cv::convertScaleAbs( grad_y, abs_grad_y );  
+    cv::imshow("【效果图】Y方向Scharr", abs_grad_y);
 
 	cv::imshow( WINDOW_NAME1, g_srcImage );
 }
