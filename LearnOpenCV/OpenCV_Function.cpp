@@ -16,6 +16,37 @@ cv::Mat g_srcImage;
 cv::Mat g_templateImage; 
 cv::Mat g_resultImage;
 
+
+//“如果某一点在任意方向的一个微小变动都会引起灰度很大的变化，那么我们就把它称之为角点”
+//在当前的图像处理领域，角点检测算法可归纳为三类：
+    //<1>基于灰度图像的角点检测
+    //<2>基于二值图像的角点检测
+    //<3>基于轮廓曲线的角点检测
+void OpenCV_Function::cornerHarris(){
+	g_srcImage=cv::imread("girl-t1.jpg");
+	cv::cvtColor( g_srcImage, g_templateImage, CV_BGR2GRAY ); 
+	g_resultImage = cv::Mat::zeros( g_srcImage.size(), CV_32FC1 );  
+	cv::Mat normImage,scaledImage;//归一化后的图
+	//进行角点检测  
+	cv::cornerHarris(g_templateImage,g_resultImage, 2, 3, 0.04);
+
+	cv::normalize(g_resultImage,normImage,0,255,cv::NORM_MINMAX, CV_32FC1, cv::Mat());
+    cv::convertScaleAbs( normImage, scaledImage );//将归一化后的图线性变换成8位无符号整型   
+	 // 将检测到的，且符合阈值条件的角点绘制出来  
+    for( int j = 0; j < normImage.rows ; j++ )  { 
+		for( int i = 0; i < normImage.cols; i++ )  {  
+			if( (int) normImage.at<float>(j,i) > 180 )  {  
+				cv::circle( g_templateImage, cv::Point( i, j ), 5,  cv::Scalar(10,10,255), 2, 8, 0 );  
+				cv::circle( scaledImage, cv::Point( i, j ), 5, cv:: Scalar(0,10,255), 2, 8, 0 );  
+			}  
+		}  
+    }  
+    //---------------------------【4】显示最终效果---------------------------------  
+	cv::imshow("g_templateImage",g_templateImage);
+	cv::imshow("convertScaleAbs",scaledImage);
+
+	cv::imshow(WINDOW_NAME1,g_srcImage);
+}
 /**
 OpenCV中的霍夫线变换有如下三种：
 	<1>标准霍夫变换（StandardHough Transform，SHT），由HoughLines函数调用。
@@ -40,8 +71,85 @@ OpenCV中的霍夫线变换有如下三种：
 	<3>因为中心是按照其关联的累加器值的升序排列的，并且如果新的中心过于接近之前已经接受的中心的话，就不会被保留下来。
 		且当有许多同心圆或者是近似的同心圆时，霍夫梯度法的倾向是保留最大的一个圆。可以说这是一种比较极端的做法，因为在这里默认Sobel导数会产生噪声，若是对于无穷分辨率的平滑图像而言的话，这才是必须的。
 */
+void HoughCircles(){
+	cv::Mat srcImage = cv::imread("20111019_e9ded922ab2b02875d1fvv3lYiYIYExI.jpg"); 
+    cv::Mat midImage,dstImage;//临时变量和目标图的定义 
+
+	   //【3】转为灰度图，进行图像平滑  
+    cv::cvtColor(srcImage,midImage, CV_BGR2GRAY);//转化边缘检测后的图为灰度图  
+    cv::GaussianBlur( midImage, midImage, cv::Size(9, 9), 2, 2 );  
+
+	 //【4】进行霍夫圆变换  
+    cv::vector<cv::Vec3f> circles;  
+    cv::HoughCircles( midImage, circles, CV_HOUGH_GRADIENT,1.5, 10, 100, 100, 0, 0 );  
+
+	 //【5】依次在图中绘制出圆  
+    for( size_t i = 0; i < circles.size(); i++ )  
+    {  
+        cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));  
+        int radius = cvRound(circles[i][2]);  
+        //绘制圆心  
+        cv::circle( srcImage, center, 3, cv::Scalar(0,255,0), -1, 8, 0 );  
+        //绘制圆轮廓  
+        cv::circle( srcImage, center, radius, cv::Scalar(155,50,255), 1, 8, 0 );  
+    }  
+	 //【6】显示效果图    
+    cv::imshow("【HoughCircles效果图】", srcImage);    
+}
+void HoughLinesP(){
+	cv::Mat srcImage = cv::imread("girl-t1.jpg");    
+    cv::Mat midImage,dstImage;//临时变量和目标图的定义 
+
+	//【2】进行边缘检测和转化为灰度图  
+    cv::Canny(srcImage, midImage, 50, 200, 3);//进行一此canny边缘检测  
+    cv::cvtColor(midImage,dstImage, CV_GRAY2BGR);//转化边缘检测后的图为灰度图  
+	//【3】进行霍夫线变换  
+    cv::vector<cv::Vec4i> lines;//定义一个矢量结构lines用于存放得到的线段矢量集合  
+    cv::HoughLinesP(midImage, lines, 1, CV_PI/180, 150, 0, 0 ); 
+
+	 //【4】依次在图中绘制出每条线段  
+    for( size_t i = 0; i < lines.size(); i++ )  
+    {  
+        cv::Vec4i l = lines[i];  
+        line( dstImage, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(86,88,155), 10, CV_AA);  
+    }   
+    //【6】边缘检测后的图   
+    cv::imshow("【HoughLinesP边缘检测后的图】", midImage);    
+    cv::imshow("【HoughLinesP效果图】", dstImage);  
+}
 void OpenCV_Function::Hough(){
+	cv::Mat srcImage = cv::imread("girl-t1.jpg");  
+    cv::Mat midImage,dstImage;//临时变量和目标图的定义 
+
+	//【2】进行边缘检测和转化为灰度图  
+    cv::Canny(srcImage, midImage, 50, 200, 3);//进行一此canny边缘检测  
+    cv::cvtColor(midImage,dstImage, CV_GRAY2BGR);//转化边缘检测后的图为灰度图  
+	//【3】进行霍夫线变换  
+    cv::vector<cv::Vec2f> lines;//定义一个矢量结构lines用于存放得到的线段矢量集合  
+    cv::HoughLines(midImage, lines, 1, CV_PI/180, 150, 0, 0 ); 
+
+	for( size_t i = 0; i < lines.size(); i++ )  
+    {  
+        float rho = lines[i][0], theta = lines[i][1];  
+        cv::Point pt1, pt2;  
+        double a = cos(theta), b = sin(theta);  
+        double x0 = a*rho, y0 = b*rho;  
+        pt1.x = cvRound(x0 + 1000*(-b));  
+        pt1.y = cvRound(y0 + 1000*(a));  
+        pt2.x = cvRound(x0 - 1000*(-b));  
+        pt2.y = cvRound(y0 - 1000*(a));  
+        line( dstImage, pt1, pt2, cv::Scalar(55,100,195), 2, CV_AA);  
+    }  
+    //【5】显示原始图    
+    cv::imshow("【原始图】", srcImage);    
+    //【6】边缘检测后的图   
+    cv::imshow("【HoughLines边缘检测后的图】", midImage);    
+    cv::imshow("【HoughLines效果图】", dstImage);  
 	
+
+	 HoughLinesP();
+
+	 HoughCircles();
 }
 
 void OpenCV_Function::resize(){

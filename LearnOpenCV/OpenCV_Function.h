@@ -15,6 +15,7 @@ class OpenCV_Function  {
 		void contrastAndBrightByTrackbar();
 		void resize();
 		void Hough();
+		void cornerHarris();
 };
 
 
