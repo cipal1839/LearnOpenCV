@@ -1,14 +1,16 @@
-﻿生成启动时间为 8/14/2015 4:38:42 PM。
+﻿生成启动时间为 8/18/2015 2:38:55 PM。
      1>项目“D:\workspace\LearnOpenCV\LearnOpenCV\LearnOpenCV.vcxproj”在节点 2 上(build 个目标)。
      1>InitializeBuildStatus:
          正在创建“Debug\LearnOpenCV.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
        ClCompile:
-         d:\tools\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Main.cpp
-         Main.cpp
+         d:\tools\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt OpenCV_Function.cpp
+         OpenCV_Function.cpp
+     1>d:\workspace\learnopencv\learnopencv\opencv_function.cpp(494): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\workspace\learnopencv\learnopencv\opencv_function.cpp(494): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
        ManifestResourceCompile:
          所有输出均为最新。
        Link:
-         d:\tools\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\workspace\LearnOpenCV\Debug\LearnOpenCV.exe" /INCREMENTAL /NOLOGO opencv_core2411d.lib opencv_highgui2411d.lib opencv_imgproc2411d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\LearnOpenCV.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\workspace\LearnOpenCV\Debug\LearnOpenCV.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\workspace\LearnOpenCV\Debug\LearnOpenCV.lib" /MACHINE:X86 Debug\LearnOpenCV.exe.embed.manifest.res
+         d:\tools\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\workspace\LearnOpenCV\Debug\LearnOpenCV.exe" /INCREMENTAL /NOLOGO opencv_core2411d.lib opencv_highgui2411d.lib opencv_imgproc2411d.lib opencv_nonfree2411d.lib opencv_features2d2411d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\LearnOpenCV.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\workspace\LearnOpenCV\Debug\LearnOpenCV.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\workspace\LearnOpenCV\Debug\LearnOpenCV.lib" /MACHINE:X86 Debug\LearnOpenCV.exe.embed.manifest.res
          Debug\Main.obj
          Debug\OpenCV_Function.obj
        Manifest:
@@ -24,4 +26,4 @@
 
 生成成功。
 
-已用时间 00:00:01.45
+已用时间 00:00:01.73

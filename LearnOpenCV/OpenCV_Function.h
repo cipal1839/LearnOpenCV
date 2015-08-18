@@ -1,7 +1,5 @@
 #ifndef _OpenCV_Function_
 	#define _OpenCV_Function_
-
-
 class OpenCV_Function  {  
 
 	public:
@@ -16,8 +14,10 @@ class OpenCV_Function  {
 		void resize();
 		void Hough();
 		void cornerHarris();
+		void floodFill();
+		void detector11();
+		void rotateImage();
+		void warpAffine();
 };
-
-
 
 #endif

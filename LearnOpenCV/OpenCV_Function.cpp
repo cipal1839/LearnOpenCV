@@ -1,7 +1,8 @@
-#include<iostream>  
-#include <opencv2/core/core.hpp>  
-#include <opencv2/highgui/highgui.hpp>  
-#include "opencv/highgui.h"
+#include "opencv2/core/core.hpp"  
+#include "opencv2/features2d/features2d.hpp"  
+#include "opencv2/highgui/highgui.hpp"  
+#include "opencv2/nonfree/nonfree.hpp"  
+#include <iostream>  
 #include "opencv/cv.h"
 #include "OpenCV_Function.h"
 
@@ -15,8 +16,83 @@ int g_nBrightValue=80;  //亮度值
 cv::Mat g_srcImage; 
 cv::Mat g_templateImage; 
 cv::Mat g_resultImage;
+void OpenCV_Function::warpAffine()  {  
+	 //【1】参数准备  
+    //定义两组点，代表两个三角形  
+    cv::Point2f srcTriangle[3];  
+    cv::Point2f dstTriangle[3];  
+    //定义一些Mat变量  
+    cv::Mat rotMat( 2, 3, CV_32FC1 );  
+    cv::Mat warpMat( 2, 3, CV_32FC1 );  
 
+    //【2】加载源图像并作一些初始化  
+    g_srcImage=cv::imread("girl-t1.jpg");
+    // 设置目标图像的大小和类型与源图像一致  
+    g_resultImage = cv::Mat::zeros( g_srcImage.rows, g_srcImage.cols, g_srcImage.type() );  
+  
+    //【3】设置源图像和目标图像上的三组点以计算仿射变换  
+    srcTriangle[0] = cv::Point2f( 0,0 );  
+    srcTriangle[1] = cv::Point2f( static_cast<float>(g_srcImage.cols - 1), 0 );  
+    srcTriangle[2] = cv::Point2f( 0, static_cast<float>(g_srcImage.rows - 1 ));  
+  
+    dstTriangle[0] = cv::Point2f( static_cast<float>(g_srcImage.cols*0.0), static_cast<float>(g_srcImage.rows*0.33));  
+    dstTriangle[1] = cv::Point2f( static_cast<float>(g_srcImage.cols*0.65), static_cast<float>(g_srcImage.rows*0.35));  
+    dstTriangle[2] = cv::Point2f( static_cast<float>(g_srcImage.cols*0.15), static_cast<float>(g_srcImage.rows*0.6));  
+  
+    //【4】求得仿射变换  
+    warpMat = getAffineTransform( srcTriangle, dstTriangle );  
+    //【5】对源图像应用刚刚求得的仿射变换  
+   cv::warpAffine( g_srcImage, g_resultImage, warpMat, g_resultImage.size() );  
+  
+    //【6】对图像进行缩放后再旋转  
+    cv::Point center = cv::Point( g_srcImage.cols/2, g_srcImage.rows/2 );  
+    double angle = -20.0;  
+    double scale = 1;  
+    // 通过上面的旋转细节信息求得旋转矩阵  
+    rotMat =cv::getRotationMatrix2D( center, angle, scale );  
+    // 旋转已缩放后的图像  
+    cv::warpAffine( g_resultImage, g_templateImage, rotMat, g_resultImage.size() );  
+	cv::imshow("【原始图】",g_srcImage);  
+	cv::imshow( "g_templateImage", g_templateImage );
+    cv::imshow( "g_resultImage", g_resultImage );  
+}  
+void OpenCV_Function::rotateImage()  {  
+    g_srcImage=cv::imread("girl-t1.jpg");
+  
+    cv::Point center = cv::Point( g_srcImage.cols/2, g_srcImage.rows/2 );  
+    double angle = -20.0;  
+    double scale = 1;  
+    cv::Mat rotMat =cv::getRotationMatrix2D( center, angle, scale );  
+    cv::warpAffine( g_srcImage, g_resultImage, rotMat, g_srcImage.size() );  
 
+	cv::imshow("【原始图】",g_srcImage);  
+    cv::imshow( "g_resultImage", g_resultImage );  
+}  
+
+void OpenCV_Function::detector11(){
+	g_srcImage=cv::imread("girl-t1.jpg");
+	int minHessian = 40;//定义SURF中的hessian阈值特征点检测算子 
+
+	cv::SurfFeatureDetector detector( minHessian );//定义一个SurfFeatureDetector（SURF） 特征检测类对象  
+    std::vector<cv::KeyPoint> keypoints_1;//vector模板类是能够存放任意类型的动态数组，能够增加和压缩数据  
+	 //【3】调用detect函数检测出SURF特征关键点，保存在vector容器中  
+    detector.detect( g_srcImage, keypoints_1 );  
+
+	//【4】绘制特征关键点  
+    cv::Mat img_keypoints_1;
+    cv::drawKeypoints( g_srcImage, keypoints_1, img_keypoints_1, cv::Scalar::all(-1), cv::DrawMatchesFlags::DEFAULT );  
+ 
+    //【5】显示效果图  
+    cv::imshow("特征点检测效果图1", img_keypoints_1 );  
+
+}
+void OpenCV_Function::floodFill(){
+	g_srcImage=cv::imread("girl-t1.jpg");
+    cv::imshow("【原始图】",g_srcImage);  
+    cv::Rect ccomp;  
+    cv::floodFill(g_srcImage, cv::Point(50,300), cv::Scalar(155, 255,55), &ccomp, cv::Scalar(20, 20, 20),cv::Scalar(20, 20, 20));  
+    cv::imshow("【效果图】",g_srcImage);  
+}
 //“如果某一点在任意方向的一个微小变动都会引起灰度很大的变化，那么我们就把它称之为角点”
 //在当前的图像处理领域，角点检测算法可归纳为三类：
     //<1>基于灰度图像的角点检测
